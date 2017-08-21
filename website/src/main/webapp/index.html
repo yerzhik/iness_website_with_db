@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>INESS 2016 Conference</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://bootswatch.com/lumen/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/underscore-min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script type="foo/bar" id="photos_templ0">
+            <%
+                // repeat items
+                _.each(photos0, function(item,key,list){
+            %>
+            <li><a href="#"><img src="img/photos/<%= item.name %>" data-large="img/photos/<%= item.name %>" data-description="" /></a></li>
+            <%
+                });
+            %>
+    </script>
+
+    <script type="foo/bar" id="abstracts_tmpl_oral">
+            <%
+                // repeat items
+                _.each(items_oral,function(item,key,list){
+                // create variables
+                // var f = item.name.split("").shift().toLowerCase();
+            %>
+            <button onclick="oralClickReaction(event, <%= item.id %>)" class="list-group-item" data-id='<%= item.id %>'>
+                <h4 class="list-group-item-heading"><span class="text-center"><%= item.topic %></span></h4>
+                <p class="list-group-item-text"><strong>Author:</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= item.author %></p>
+                <!--<img src="<%= item.img %>" class="img-rounded" width="200" height="auto">-->
+                <p class="list-group-item-text"><strong>Time:</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= item.startTime %></p>
+                <p class="list-group-item-text"><strong>Room Number:</strong><%= item.roomNumber %></p>
+            </button>
+            <br>
+            <%
+                });
+            %>
+    </script>
+    <script type="foo/bar" id="abstracts_tmpl_poster">
+            <%
+                // repeat items
+                _.each(items_poster,function(item,key,list){
+                // create variables
+                // var f = item.name.split("").shift().toLowerCase();
+            %>
+            <button onclick="posterClickReaction(event, <%= item.id %>)" class="list-group-item" data-id='<%= item.id %>'>
+                <h4 class="list-group-item-heading"><span class="text-center"><%= item.topic %></span></h4>
+                <p class="list-group-item-text">Author:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= item.author %></p>
+            </button>
+            <br>
+            <%
+                });
+            %>
+    </script>
+
+    <script type="foo/bar" id='abstracts_info_tmpl'>
+
+            <button type="button" class="btn btn-info" onclick="backButton()">BACK</button>
+            <br>
+            <div class="panel panel-primary">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <h3><%= selectedItem.topic %></h3>
+                    <br>
+                    <%= selectedItem.author %>
+                </div>
+                <div class="panel-body">
+                    <!--<p class="lead label label-default">Author:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= selectedItem.author %></p>-->
+                    <!--<br>-->
+                    <h2><p class="lead"><strong>ABSTRACT</strong></p></h2>
+                    <br>
+                    <p class="lead" style="text-indent: 50px;"><%= selectedItem.abstractText %></p>
+                </div>
+            </div>
+            <!--<p class="lead label label-primary text-center"><%= selectedItem.topic %></p>-->
+            <!--<br>-->
+            <!--<p class="lead label label-default">Author:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= selectedItem.author %></p>-->
+            <!--<br>-->
+            <!--<h2><p class="lead"><strong>ABSTRACT</strong></p></h2>-->
+            <!--<br>-->
+            <!--<p class="lead" style="text-indent: 50px;"><%= selectedItem.abstractText %></p>-->
+
+    </script>
+
+    <!--image slider-->
+    <!--<link rel="stylesheet" type="text/css" href="css/demo.css" />-->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/elastislide.css" />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&v1' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css' />
+    <noscript>
+        <style>
+            .es-carousel ul{
+                display:block;
+            }
+        </style>
+    </noscript>
+    <script id="img-wrapper-tmpl" type="text/x-jquery-tmpl">
+			<div class="rg-image-wrapper">
+				{{if itemsCount > 1}}
+					<div class="rg-image-nav">
+						<a href="#" class="rg-image-nav-prev">Previous Image</a>
+						<a href="#" class="rg-image-nav-next">Next Image</a>
+					</div>
+				{{/if}}
+				<div class="rg-image"></div>
+				<div class="rg-loading"></div>
+				<div class="rg-caption-wrapper">
+					<div class="rg-caption" style="display:none;">
+						<p></p>
+					</div>
+				</div>
+			</div>
+		</script>
+</head>
+<body>
+<div class="container" id="abstracts_info_container">
+    <img id="logo_img2" src="img/logo.png" class="img-fluid" height="auto" align="middle">
+    <div id="abstracts_info"></div>
+</div>
+<div class="container" id="main_container">
+    <div id="header">
+        <img id="logo_img" src="img/logo.png" class="img-responsive" align="middle">
+        <!--<h2><span class="label label-primary">INESS 2016</span></h2>-->
+        <ul id="menu_items_ul" class="nav nav-tabs nav-tabs-responsive ">
+            <li class="active"><a id="tab6" data-toggle="tab" href="#menu6">HOME</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Speakers
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a id="tab1" data-toggle="tab" href="#simposium_sessions">Simposium Sessions</a></li>
+                    <li><a id="tab2" data-toggle="tab" href="#poster_sessions">Poster Sessions</a></li>
+                    <li><a id="tab3" data-toggle="tab" href="#invited_speakers">Invited Speakers</a></li>
+                </ul>
+            </li>
+            <li id="highlights_menu_item"><a id="tab10" data-toggle="tab" href="#highlights">Gallery</a></li>
+            <li><a id="tab4" data-toggle="tab" href="#sponsors">Exhibitors</a></li>
+            <!--<li><a id="tab11" data-toggle="tab" href="#committees">Committees</a></li>-->
+            <li><a id="tab12" data-toggle="tab" href="#iness_program">INESS Program</a></li>
+            <!--<li><a id="tab13" data-toggle="tab" href="#iness_topics">INESS Topics</a></li>-->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Information
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a id="tab8" data-toggle="tab" href="#travel">Travel Information</a></li>
+                    <li><a id="tab9" data-toggle="tab" href="#location">Location</a></li>
+                    <li><a id="tab7" data-toggle="tab" href="#menu7">History Of INESS</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="tabs" class="tab-content">
+        <div id="highlights" class="tab-pane fade">
+            <div class="content">
+                <h1>Images of INESS 2016</h1>
+                <div id="rg-gallery" class="rg-gallery">
+                    <div class="rg-thumbs">
+                        <!-- Elastislide Carousel Thumbnail Viewer -->
+                        <div class="es-carousel-wrapper">
+                            <div class="es-nav">
+                                <span class="es-nav-prev">Previous</span>
+                                <span class="es-nav-next">Next</span>
+                            </div>
+                            <div class="es-carousel">
+                                <ul id="photos_list_0">
+
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- End Elastislide Carousel Thumbnail Viewer -->
+                    </div><!-- rg-thumbs -->
+                </div><!-- rg-gallery -->
+                
+            </div><!-- content -->
+        </div>
+        <div id="travel" class="tab-pane fade">
+            <p class="lead">
+            <h2>Travel Information</h2>
+            <h3>VISA INFORMATION</h3>
+            </p>
+            <p class="lead">
+                <br>For citizens of the CIS countries, United Kingdom, United States of America, Germany, France, Italy, Malaysia, Netherlands, United Arab Emirates, South Korea, Switzerland, Spain, Belgium, Hungary, Monaco, Singapore, Australia, Norway, Sweden, Finland and Japan entering and leaving Kazakhstan without visas in the period from 16 July 2015 to 31 December 2017.
+                In accordance with the Governmental Regulation №483 from June 26, 2015  to the amendments and additions to the Decree of the Government of the Republic of Kazakhstan dated January 21, 2012 №148 citizens of the Russia, United Kingdom, United States of America, Germany, France, Italy, Malaysia, Netherlands, United Arab Emirates, South Korea, Switzerland, Spain, Belgium, Hungary, Monaco, Singapore, Australia, Norway, Sweden, Finland and Japan are exempt from visa requirements for visits up to fifteen calendar days from the moment of crossing the state border between July 16, 2015 to December 31, 2017.
+                Registration of citizens of these countries is carried out by the Border Service of the National Security Committee through affixing date stamp in the “registration” migration card.
+                Please, check information about visa to visit conference from official web-site of Ministry of Foreign Affairs Republic of Kazakhstan or local Embassy of the Republic of Kazakhstan.
+                For additional information to request a visa invitation letter or any other information, please contact by e-mail: iness@batterykazakhstan.com
+
+                <br><br>
+                <strong>AIRPORT</strong>
+                <br>
+                Almaty International airport information, www.alaport.com
+
+                <br><br>
+                <strong>EMERGENCY TELEPHONE NUMBERS</strong><br>
+                Fire: 101<br>
+                Police: 102<br>
+                Ambulance: 103<br>
+                <br>
+                <img src="img/travel/interteach.png" align="left"><br>
+            </p>
+            <p class="lead">
+                Interteach: +7 (727) 3 200 200   (multilanguage personal – Kazakh, Russian, English, Français, Español). Accepts insurence from many companies
+                <br>
+            <h3>HOTELS</h3>
+            </p>
+            <p class="lead">
+                Recommended 4-5 star hotels for visitors:<br>
+            </p>
+            <p class="lead">
+                <img src="img/travel/hotel1.jpg" align="left">Best Western PLUS Atakent Park Hotel – the nearest 4 star hotel. Distance to KazNU up to 5 minutes depending on traffic by taxi, on foot 10-15 minutes. When you are booking the hotel Atakent Park Hotel, please add the location name: al-Farabi KazNU.
+                <br>On-line booking – <a href="www.bestwesternrussia.ru">www.bestwesternrussia.ru</a>, multilingual staff, credit cards accepted. Price from 150 USD/night (for participants price will be lower).
+            </p>
+            <p class="lead">
+                <br>
+                <img src="img/travel/hotel2.png" align="left"><strong>Kazakhstan </strong>– 4 star hotel. The building constructed to stand an earthquake that measures 9.0 on the Richter scale. It is a famous landmark all over Almaty, and serves as a symbol of the city. It is also the eighth tallest building in all Kazakhstan. Distance to KazNU up to 20 minutes depending on traffic by taxi.
+                <br>On-line booking – <a href="www.kazakhstanhotel.kz">www.kazakhstanhotel.kz</a>, multilingual staff, transfer, credit cards accepted. Price from 70 USD/night.
+            </p><br>
+            <p class="lead">
+                <br>
+                <img src="img/travel/hotel3.gif" align="left"><strong>Rahat Palace</strong> – the first 5 star hotel in Central Asia. Distance to KazNU up to 5 minutes depending on traffic by taxi.
+                <br>On-line booking – <a href="www.rahatpalace.com">www.rahatpalace.com</a>, multilingual staff, credit cards accepted. Price from 150 USD/night.
+            </p><br>
+            <p class="lead">
+                <br>
+                <img src="img/travel/hotel4.png" align="left"><strong>Holiday Inn Almaty</strong> – 4 star hotel. Distance to KazNU 5-10 minutes depending on traffic by taxi.
+                <br>On-line booking – <a href="www.holidayinn.com">www.holidayinn.com</a>, multilingual staff, credit cards accepted. Price from 70 USD/night.
+
+            </p>
+
+        </div>
+        <div id="location" class="tab-pane fade">
+            <h2>INESS Location</h2>
+            <p class="lead">
+                The 4th International Conference on Nanomaterials and Advanced Energy Storage Systems (INESS-2016) organized by the Nazarbayev University (NU), the Al-Farabi Kazakh National University (Al-Farabi KazNU), Institute of Batteries (IoB), National Laboratory Astana (NLA) and Nazarbayev Research and Innovation System (NURIS) to be held on August 11-13, 2016 in Almaty at the Al-Farabi KazNU and cordially invite you to participate!
+            </p>
+            <p class="lead" align="middle">
+                <img src="img/location/location.jpg" class="img-responsive" align="middle">
+                <strong>Al-Farabi Kazakh National University</strong>
+            </p>
+
+            <p class="lead" align="middle">
+                <img src="img/location/kaznu.jpg" class="img-responsive">
+            </p>
+            <br>
+            <p class="lead">
+                <a href="http://kaznu.kz/en">KazNU</a> is the oldest classical university of the Republic established by the Decree of the Kazakh Regional Committee (KRC) office dated November 13, 1933. One year after Kazakhstan’s 1990 declaration of independence, the name was changed to Al-Farabi Kazakh State University. In 2001, the government classified it as a “national” university. More than 20000 students, graduates and PhD students study at KazNU, and there are more than 2500 faculty members working at KazNU, including 400 doctors of science, professors and more than 800 candidates of science and associate professors. Like other universities founded under the Soviet system, it is highly centralized. (<a href="https://en.wikipedia.org/wiki/Al-Farabi_Kazakh_National_University">Wikipedia</a>)
+            </p>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2055.8621746468693!2d76.92370166464426!3d43.22148179551177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x6cf43d18ecbe5415!2z0JHQuNCx0LvQuNC-0YLQtdC60LAg0JrQsNC30J3Qow!5e0!3m2!1sen!2skz!4v1470648356757"
+                                    frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br><br>
+            <p class="lead" align="middle">
+                <img src="img/location/almaty.png" class="img-responsive" align="middle">
+                <strong>Almaty city, Kazakhstan</strong>
+            </p>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe src="https://www.youtube.com/embed/8CUfJA1czcI" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <p class="lead">
+                <strong>Almaty</strong> is the largest city in Kazakhstan, with a population of 1,703,481 people, comprising 9% of the country’s total population. Almaty is considered a World City with a Beta classification according to GaWC. It served as capital of the Kazakh state in its various forms from 1929 to 1997, under the influence of the then Soviet Union and its appointees. Alma-Ata was the host city for a 1978 international conference on Primary Health Care where the Alma Ata Declaration was adopted, marking a paradigm shift in global public health. In 1997 the government relocated the capital to Astana in the north of the country.
+                <br>Almaty continues as the major commercial and cultural centre of Kazakhstan, as well as its biggest population center. The city is located in the mountainous area of southern Kazakhstan in the foothills of the Trans-Ili Alatau at an elevation of 2,300–3,000 feet (700–900 m).
+            </p>
+        </div>
+        <div id="iness_program" class="tab-pane fade">
+            <p class="lead">
+                Final Program of INESS-2016
+                <br>
+                <img src="img/program/1.png" class="img-responsive"><br>
+                <img src="img/program/2.png" class="img-responsive"><br>
+                <img src="img/program/3.png" class="img-responsive"><br>
+                <img src="img/program/4.png" class="img-responsive"><br>
+                <img src="img/program/5.png" class="img-responsive"><br>
+                <img src="img/program/6.png" class="img-responsive"><br>
+                <img src="img/program/7.png" class="img-responsive"><br>
+                <img src="img/program/8.png" class="img-responsive"><br>
+                Dear Participant!<br>
+                Thank you very much for your participation and valuable contribution to our Conference. We hope you had enjoyable time in Almaty, Kazakhstan and efficient time at Al-Farabi Kazakh National University. We will work on further development of our collaboration for the best education and research.
+                <br>We are looking forward to seeing you again.
+                <br>Yours sincerely,
+                <br>Prof. Zhumabay Bakenov and Institute of Batteries, Advanced Energy Storage Systems and Functional Nanomaterials Research Group of Nazarbayev University, National Laboratory Astana, Nazarbayev University Research and Innovation System, and Al-Farabi Kazakh National University.
+
+            </p>
+        </div>
+        <div id="iness_topics" class="tab-pane fade">
+            <p class="lead"><strong>The INESS 2016</strong> topics cover the following and related areas:</p>
+            <ul class="lead">
+                <li>    Advanced Nanomaterials for Energy Application</li>
+                <li>    Advanced Energy Storage, Conversion and Saving Systems</li>
+                <li>    Materials for electrochemical sensor and electroanalytical applications</li>
+                <li>    Catalysis and fuel cells</li>
+                <li>    Battery monitoring and management systems</li>
+                <li>    Battery safety and utilization</li>
+                <li>    Development of electric vehicles and stationary energy storage</li>
+                <li>    Modeling tools in materials science and energy conversion systems</li>
+                <li>    Materials and technologies for other energy applications</li>
+            </ul>
+            <br>
+            <p class="lead">
+                The Conference will include a session with workshops and lectures on commercialization and patenting by the Nazarbayev University and other specialists – a good chance to check if your commercialization is going in an effective path!
+                <br>
+                Full length papers presented at the Conference will be published as Proceedings in high-impact factor journal (Indexed by Elsevier: SCOPUS) after each paper is thoroughly reviewed and (if any) satisfactorily modified according to the reviewer comments.
+            </p>
+        </div>
+        <div id="invited_speakers" class="tab-pane fade">
+            <h3>Invited Speakers</h3>
+            <table class="table table-striped table-bordered table-hover">
+                <tbody>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p><img class="size-full wp-image-2584 aligncenter" src="img/invited/wakihara.png" alt="wakihara" width="125" height="140" sizes="(max-width: 125px) 100vw, 125px"></p></td>
+                    <td width="312"><strong>Prof. Masataka Wakihara</strong><p></p>
+                        <p>Emeritus Professor, Department of Applied Chemistry, Graduate school of Science and Engineering, Tokyo Institute of Technology (Japan).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Nonflammable All-Solid Polymer Lithium Ion Battery at Higher Temperatures</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="size-full wp-image-2426 aligncenter" src="img/invited/jean.png" width="124" height="149" sizes="(max-width: 124px) 100vw, 124px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof.&nbsp;Jean-Pierre Pereira-Ramos</strong></p>
+                        <p>Professor,&nbsp;Director of 2nd&nbsp;class research – CNRS, Group Electrochemistry and Spectroscopy of Materials – GESMAT (France).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>The&nbsp;</em><em>γ</em><em>-V2O5&nbsp;phase: a new high voltage cathode material for sodium-ion batteries</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="size-full wp-image-2592 aligncenter" src="img/invited/kiyoshi.png"   width="125" height="140" sizes="(max-width: 125px) 100vw, 125px"></a></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof. Kiyoshi Kanamura</strong></p>
+                        <p>Professor, Department of Applied Chemistry, Graduate school of Urban Environmental Science, Tokyo Metropolitan University (Japan).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Investigation of electrochemical properties of LiMnPO<sub>4</sub>&nbsp;and Fe-substituted LiMnPO<sub>4</sub>&nbsp;by single particle measurement</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="size-full wp-image-2593 aligncenter" src="img/invited/nina.png" alt="wakihara" width="125" height="140"
+                                sizes="(max-width: 125px) 100vw, 125px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof.&nbsp;Nina V. Kosova</strong></p>
+                        <p>Professor of Institute of Solid State Chemistry and Mechanochemistry,&nbsp;Electrochemistry, Nanotechnology, Solid-state Chemistry (Russia).<br>
+                            <strong><em>Lecture title:</em></strong><strong><em>&nbsp;</em></strong></p>
+                        <p><em>Insertion compounds prepared via mechanochemically assisted solid state way for advanced sodium- and lithium-ion batteries</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="wp-image-2420 aligncenter" src="img/invited/munakata.jpg" width="125" height="162"
+                                sizes="(max-width: 125px) 100vw, 125px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof. Hirokazu Munakata</strong></p>
+                        <p>Professor, Department of Applied Chemistry, Graduate School of Urban Environmental Science, Tokyo Metropolitan University (Japan).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Development of non-humidified intermediate-temperature fuel cells using ionic liquid / porous polyimide composite membranes</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="wp-image-2417 aligncenter" src="img/invited/sigita.jpg" width="125" height="167"
+                                sizes="(max-width: 125px) 100vw, 125px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Dr. Sigita&nbsp;Trabesinger</strong></p>
+                        <p>Project Leader Electrodes and Cells at&nbsp;Paul ScherrerInstitute, Switzerland.</p>
+                        <p>Li-S (Lithium Sulphur) battery,&nbsp;Silicon negative electrodes,&nbsp;Li-air batteries,&nbsp;Carbon materials&nbsp;(Switzerland).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Comparative evaluation of battery chemistries</em></p>
+                        <p>&nbsp;</p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="size-full wp-image-2595 aligncenter" src="img/invited/kim.png" width="127" height="140"
+                                sizes="(max-width: 127px) 100vw, 127px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof. Sung-Soo Kim</strong></p>
+                        <p>Associate Professor of Graduate School of Energy Science and Technology, Chungnam National University (Korea)</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Microstructures and electrochemical properties of Si-M (M : Cr, Ni) as alloy anode for Li secondary batteries</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="size-full wp-image-2596 aligncenter" src="img/invited/lee.png" width="132" height="140"
+                                sizes="(max-width: 132px) 100vw, 132px"></a></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Prof. Sergey Lee</strong></p>
+                        <p>Chief Executive Officer of LLC&nbsp;SuperOx Japan&nbsp;(Japan)</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Development of second generation of high-Tc superconducting tapes (2G-HTS) at SuperOx for power generation, transmission and energy storage applications</em></p></td>
+                </tr>
+                <tr>
+                    <td width="311">&nbsp;<p></p>
+                        <p>&nbsp;</p>
+                        <p><img class="wp-image-2423 aligncenter" src="img/invited/zhang.png" width="125" height="143"
+                                sizes="(max-width: 125px) 100vw, 125px"></p></td>
+                    <td width="312">&nbsp;<p></p>
+                        <p><strong>Dr. Yongguang Zhang</strong></p>
+                        <p>Assistant Professor of Hebei University of Technology, Research Institute for Energy Equipment Materials&nbsp;(China).</p>
+                        <p><strong><em>Lecture title:</em></strong></p>
+                        <p><em>Facile synthesis of Fe<sub>3</sub>O<sub>4&nbsp;</sub>/ C nanocomposites as anode materials for lithium-ion batteries</em></p>
+                        <p>&nbsp;</p></td>
+                </tr>
+                <tr>
+                    <td width="319">&nbsp;<img class="wp-image-2675 aligncenter" src="img/invited/thierry.png" width="135" height="173"
+                                               sizes="(max-width: 135px) 100vw, 135px"></a></td>
+                    <td width="319">
+                        <div></div>
+                        <div><strong>Prof. Thierry DJENIZIAN</strong></div>
+                        <p>Head of&nbsp;Flexible Electronics Department<br>
+                            Center of Microelectronics in Provence</p>
+                        <p><strong><em>Lecture title: </em></strong><em>Enhanced electrochemical performance of porous electrodes for all-solid-state Li-ion microbatteries&nbsp;</em><strong><em><br>
+                        </em></strong></p>
+                        <p>&nbsp;</p></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="simposium_sessions" class="tab-pane fade">
+            <h3>Simposium Sessions</h3>
+            <div class="list-group" id="abstracts_oral">
+            </div>
+        </div>
+        <div id="poster_sessions" class="tab-pane fade">
+            <h3>Poster Sessions</h3>
+            <div class="list-group" id="abstracts_poster">
+            </div>
+        </div>
+        <div id="sponsors" class="tab-pane fade">
+            <br>
+            <p class="lead">
+                <strong>For future sponsors and exhibitors, you can register your company by sending us email to <a>iness@batterykazakhstan.com</a></strong>
+            </p>
+            <section id="partners1" class="block">
+                <div class="container">
+                    <header>
+                        <h2><a class="roll">Sponsors</a></h2>
+                    </header>
+                    <div class="logos">
+                        <div class="logo"><a><img src="img/sponsors/sponsor1.gif" class="sponsors img-thumbnail" alt="Hohsen Corp."></a></div>
+                        <div class="logo"><a><img src="img/sponsors/sponsor2.jpg" class="sponsors img-thumbnail" alt="БИОХИМ ПРИБОР"></a></div>
+                    </div>
+                </div><!-- .container -->
+            </section>
+
+            <section id="partners2" class="block">
+                <div class="container">
+                    <header>
+                        <h2><a class="roll">Exhibitors</a></h2>
+                    </header>
+                    <div class="logos">
+                        <div class="logo"><a ><img src="img/sponsors/sponsor1.gif" class="sponsors img-thumbnail" alt="Hohsen Corp."></a></div>
+                        <div class="logo"><a ><img src="img/sponsors/sponsor2.jpg" class="sponsors img-thumbnail" alt="БИОХИМ ПРИБОР"></a></div>
+                        <div class="logo"><a ><img src="img/sponsors/sponsor3.gif" class="sponsors img-thumbnail" alt="Institute Of Batteries" width="304" height="auto"></a></div>
+                        <div class="logo"><a ><img src="img/sponsors/sponsor4.gif" class="sponsors img-thumbnail" alt="Interactive Corporation"></a></div>
+                        <div class="logo"><a ><img src="img/sponsors/sponsor5.png" class="sponsors img-thumbnail" alt="Elementum"></a></div>
+                    </div>
+                </div><!-- .container -->
+            </section>
+
+            <h2>EXHIBITOR INFORMATION</h2>
+            <p class="lead">
+
+                <strong>Registration fee ($200) includes basic stand, coffee-break and lunch:</strong><br>
+                Two participant registrations are included with your booked booth.<br><br>
+
+                <strong>The basic stand package includes:</strong><br>
+            </p>
+            <ul class="lead">
+                <li>White panels in frame: min. L90cm x H180cm (incl. frame)</li>
+                <li>One table of size: L150cm x 60cm</li>
+                <li>Two chairs</li>
+                <li>Main connection electricity</li>
+                <li>For more items, wired internet, additional electricity, etc., please contact: <a >almagul.mentbayeva@nu.edu.kz</a></li>
+            </ul>
+
+            <p class="lead">
+                <strong>Booth Installation:</strong><br>
+                You may start your booth installation on Wednesday evening, 10 August from 15:00-18:00 or Thursday morning, 11 August between 8:00-9:30.<br><br>
+
+                <strong>Exhibition Hours:</strong><br>
+                Thursday (August 11) 9:30-17:00<br>
+                Friday (August 12) 9:30-16:00<br>
+            </p>
+        </div>
+        <div id="committees" class="tab-pane fade">
+            <h2><b>ORGANIZING COMMITTEE</b></h2>
+            <ol class="lead">
+                <li style="font-weight: 400;"><b>Chairman</b><span style="font-weight: 400;"> – Prof. Zhumabay Bakenov, Institute of Batteries LLP, National Laboratory Astana, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Prof. Mukhambetkali Burkitbayev, the First-Vice Rector, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Prof. Tlekkabyl Ramazanov, Vice-Rector for Research-Innovation Affairs, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Prof. Zhaxybay Zhumadilov, General Director, National Laboratory Astana, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Prof. Masataka Wakihara, Tokyo Institute of Technology, Japan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Dr. Kanat Baigarin, Vice-President for Innovation and Research, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Co-Chairman</b><span style="font-weight: 400;"> – Prof. Mikhail Nauryzbayev, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Indira Kurmanbayeva, Institute of Batteries LLP, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Moulay-Rachid Babaa, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Yerdos Ongarbayev, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Andrey Kurbatov, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Mohamed Teyeb Ould Ely, Nazarbayev University, Kazakhstan </span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Almagul Mentbayeva, National Laboratory Astana, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Khaidar Tassybekov, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. D. Adair, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Alina Galeyeva, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Anara Molkenova, Head of Microscopy Laboratory, National Laboratory Astana, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Vladimir Pavlenko, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Dr. Arailym Nurpeissova, National Laboratory Astana, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Nurzhan Umırov, National Laboratory Astana, Institute of Batteries LLP, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Aliya Mukanova, National Laboratory Astana, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Maxim Lepikhin, Al-Farabi Kazakh National University, Kazakhstan </span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Gaukhar Askarova, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Zhalgas Kulametov, National Laboratory Astana, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Aizhan Tobysheva, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Yerzhigit Sugurbekov, School of Engineering, Nazarbayev University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Kamila Ablayeva, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Dauren Batyrbekuly, Institute of Batteries LLP, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Dinara Abdulakhitova, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Anar Zhexembekova, Institute of Batteries LLP, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Azhar Moldabayeva, Institute of Batteries LLP, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Murat Sultanov, Nazarbayev University Research and Innovation Systems, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Saule Akhmetova, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Ms. Asylzat Aishova, Nazarbayev University Research and Innovation Systems, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Mr. Akylbek Adi, Nazarbayev University Research and Innovation Systems, Kazakhstan</span></li>
+            </ol>
+            <p>&nbsp;</p>
+            <h2><b>SCIENTIFIC ADVISORY COMMITTEE</b></h2>
+            <ol class="lead">
+                <li style="font-weight: 400;"><b>Chairman</b><span style="font-weight: 400;"> – Prof. Zulkhair Mansurov, Al-Farabi Kazakh National University, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Sung Soo Kim, Chungnam National University, Korea</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Jean-Pierre Pereira-Ramos, CNRS et Université Paris Est Créteil, France</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. KyoshiKanamura, Tokyo Metropolitan University, Japan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. HirokazuMunakata, Tokyo Metropolitan University, Japan</span></li>
+                <li style="font-weight: 400;"><span style="font-weight: 400;">Prof. Seung-TaekMyung, Sejong University, Korea.</span></li>
+            </ol>
+            <p>&nbsp;</p>
+            <h2><b>Secretariat of INESS-2016</b></h2>
+            <ol class="lead">
+                <li style="font-weight: 400;"><b>Technical Secretary</b><span style="font-weight: 400;"> – Dr. Indira KURMANBAYEVA, Institute of Batteries LLP, Kazakhstan</span></li>
+                <li style="font-weight: 400;"><b>Scientific Secretary</b><span style="font-weight: 400;"> – Dr. Kuralay KORZHYNBAYEVA, Institute of Batteries LLP, Kazakhstan</span></li>
+            </ol>
+        </div>
+        <div id="menu7" class="tab-pane fade">
+            <h2><p class="lead"><strong>History of INESS</strong></p></h2>
+            <p class="lead">
+                The INESS meeting began in 2013 as a conference held at Astana, Kazakhstan. Since then we have organized three successful conferences under the theme of Renewable Energy, Materials Science, Energy Storage Systems and Nanotechnology. The INESS Conference series have had continued success in 2014 (Astana, Kazakhstan) and 2015 (Astana, Kazakhstan). The scientists and students from Japan, Korea, France, China, Russia, Canada, UAE, UK, Turkey and Kazakhstan reviewed and discussed the recent progress and problems in materials science, nanotechnologies, ecology, renewable energy, energy storage systems and modeling methods in these fields.
+                <br>
+                <br>
+                The INESS-2016 Conference is a new development in this series, in response to growing interests from additional participants on conference workshop topics and in heritage of its last success of INESS-2015, the conference will aim to be a unique platform for leading scientists, researchers, scholars and engineers from academia, R&D laboratories and industry around the world to exchange. The researchers from different countries (confirmed participants from Japan, Korea, China, France, Switzerland, Turkey, Russia and other countries) will participate and share their vision on progress and problems in materials science, nanotechnologies, ecology, renewable energy and energy storage systems.
+                INESS-2016 will be supported by several TV, newspaper and internet companies. INESS-2016 is an open event and the participants from academia, industry and investors sectors are welcome to participate. We expect participation of several partner companies, investors and technology commercialization specialists. The INESS organizers will present several ongoing commercialization, national, and industrial studies.
+                <br><br>
+                INESS is included into the list of <a style="color: #0000ff;" href="http://www.globaleventslist.elsevier.com/events/2016/08/iness-2016/" target="_blank">Global Events by Elsevier Inc.</a>
+                <br><br>
+                For past conferences please check <a style="color: #0000ff;" href="http://batterykazakhstan.com/iness-2015/" target="_blank">http://batterykazakhstan.com/iness-2015/</a>.
+                <br><br>
+            </p>
+        </div>
+        <div id="menu6" class="tab-pane fade in active">
+            <img class="img-responsive img-center" src="img/home/highlights.png">
+            <br>
+            <h2><p class="lead"><strong>Dear Colleagues!</strong></p></h2>
+            <p class="lead">
+                Over 150 people from 12 different countries attended the 4th International Conference on Nanomaterials and Advanced Energy Storage Systems (INESS2016) organized by Nazarbayev University (NU), the Al-Farabi Kazakh National University (Al-Farabi KazNU), Institute of Batteries (IoB), National Laboratory Astana (NLA), and Nazarbayev Research and Innovation System (NURIS) in Almaty, Kazakhstan, August 11-13, 2016.
+            </p>
+
+            <p class="lead">
+                Check out tons of photos from the Conference on our Facebook page <a href="https://www.facebook.com/hashtag/iness2016">#INESS2016</a>  or at our <a class="nav-link" style="cursor:pointer;cursor:hand;" onclick="galleryClick()">gallery page</a>.
+            </p>
+
+            <h2> Sponsors and Exhibitors</h2>
+            <p class="lead">
+                Special thanks goes to all the conference sponsors and exhibitors, who supported our event and showcased the tools and equipment so critical to scientific research.
+            </p>
+
+            <h2><p class="lead"><strong>Looking forward to seeing you next year!</strong></p></h2>
+
+            <p class="lead">
+                Yours sincerely,
+                <br>
+                Chairman of the Organizing Committee
+                <br>
+                Professor Zhumabay Bakenov,
+                <br>
+                School of Engineering,
+                <br>
+                Director of Center of Energy and Advanced Materials Science,
+                <br>
+                National Laboratory Astana, Nazarbayev University,
+                <br>
+                Institute of Batteries LLC,
+                <br>
+                53, KabanbayBatyr Ave., Astana 010000 Kazakhstan
+                <br>
+                <strong>Phone:</strong> +7 7172 70 65 30; <strong>Email:</strong> zbakenov(at)nu(dot)edu(dot)kz
+                <br>
+                Web-site: <a style="color: #0000ff;" href="https://nu.edu.kz" target="_blank">https://nu.edu.kz</a>, <a style="color: #0000ff;" href="http://batterykazakhstan.com" target="_blank">http://batterykazakhstan.com</a>
+                <br>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="js/jquery.elastislide.js"></script>
+<script type="text/javascript" src="js/gallery.js"></script>
+</body>
+</html>

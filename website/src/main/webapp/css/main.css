@@ -1,0 +1,52 @@
+body {
+    overflow-y: auto;
+    height: 100%;
+    /*padding-top: 155px; !* set this to your header height *!*/
+}
+.list-group {
+    max-height: 100%;
+}
+
+.list-group-item {
+    background-image: url("../img/abstract-item-bg.jpg");
+    background-size: 100% 100%;
+}
+
+#header {
+    position: fixed; /* keep at the top of the page */
+    /*height: 20%; !* header height *!*/
+    top: 0; /* stay at the top of the page */
+    z-index: 10; /* make the header sit on top */
+    background: white; /* transparent background won't look right here */
+}
+
+.container {} .nav-tabs > li.active > a,
+              .nav-tabs > li.active > a:hover,
+              .nav-tabs > li.active > a:focus {
+                  color: #ffffff;
+                  cursor: default;
+                  background-color: #337ab7;
+                  border: 1px solid #dddddd;
+                  border-bottom-color: transparent;
+              }
+
+.sponsors {
+    width: auto;
+    height: 75px;
+}
+
+.logos {
+    display: block;
+    line-height: 0;
+    margin-top: 10px;
+    padding: 30px 10px;
+    text-align: justify;
+}
+
+.logos .logo {
+    display: inline-block;
+    margin-bottom: 7px;
+    position: relative;
+}
+
+.img-center {margin:0 auto;}
